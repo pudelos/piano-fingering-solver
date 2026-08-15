@@ -18,7 +18,7 @@ class MusicXmlValidator:
         part = source_score.parts[0]
         measures = part.recurse().getElementsByClass("Measure")
 
-        if any(measure.hasVoices() for measure in measures):
+        if any(len(measure.voices) > 1 for measure in measures):
             raise MusicXmlImportError("Multiple voices are not supported.")
 
         if any(

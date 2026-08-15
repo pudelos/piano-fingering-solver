@@ -1,7 +1,6 @@
 from fractions import Fraction
 from pathlib import Path
 
-from music21 import chord as music21_chord
 from music21 import converter
 from music21 import note as music21_note
 
@@ -9,6 +8,7 @@ from piano_fingering_solver.core.melody import Melody
 from piano_fingering_solver.core.note import Note
 from piano_fingering_solver.importer.document import MusicXmlDocument
 from piano_fingering_solver.importer.exceptions import MusicXmlImportError
+from piano_fingering_solver.importer.validator import MusicXmlValidator
 
 
 class MusicXmlImporter:
@@ -36,18 +36,12 @@ class MusicXmlImporter:
                 f"Could not parse MusicXML file: {path}"
             ) from error
 
-        if len(source_score.parts) != 1:
-            raise MusicXmlImportError(
-                "Only MusicXML files with exactly one part are supported."
-            )
+        MusicXmlValidator.validate_score(source_score)
 
         imported_notes: list[Note] = []
         part = source_score.parts[0]
 
         for element in part.flatten().notes:
-            if isinstance(element, music21_chord.Chord):
-                raise MusicXmlImportError("Chords are not supported yet.")
-
             if not isinstance(element, music21_note.Note):
                 continue
 
@@ -62,6 +56,9 @@ class MusicXmlImporter:
                     pitch=element.pitch.midi,
                 )
             )
+
+        imported_notes.sort(key=lambda note: note.start)
+        MusicXmlValidator.validate_melody(imported_notes)
 
         return MusicXmlDocument(
             melody=Melody(notes=imported_notes),

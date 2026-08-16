@@ -38,8 +38,10 @@ class MusicXmlImporter:
 
         MusicXmlValidator.validate_score(source_score)
 
+        analysis_score = source_score.stripTies(inPlace=False)
+
         imported_notes: list[Note] = []
-        part = source_score.parts[0]
+        part = analysis_score.parts[0]
 
         for element in part.flatten().notes:
             if not isinstance(element, music21_note.Note):

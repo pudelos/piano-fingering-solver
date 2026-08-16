@@ -4,6 +4,7 @@ from fractions import Fraction
 import pytest
 from music21 import note as music21_note
 from music21 import stream
+from music21 import tie as music21_tie
 
 from piano_fingering_solver.importer.musicxml import MusicXmlImporter
 
@@ -45,3 +46,36 @@ def test_imports_notes(tmp_path, extension, pitches):
         assert imported_note.pitch == music21_note.Note(pitches[index]).pitch.midi
         assert imported_note.start == Fraction(index)
         assert imported_note.end == Fraction(index + 1)
+
+
+def test_imports_tied_notes_as_single_note(tmp_path):
+    source_score = stream.Score()
+    part = stream.Part()
+
+    note_a = music21_note.Note(60)
+    note_a.quarterLength = 4
+    note_a.tie = music21_tie.Tie("start")
+
+    note_b = music21_note.Note(60)
+    note_b.quarterLength = 4
+    note_b.tie = music21_tie.Tie("stop")
+
+    part.append(note_a)
+    part.append(note_b)
+    source_score.insert(0, part)
+
+    musicxml_path = tmp_path / "tied.musicxml"
+    source_score.write("musicxml", fp=musicxml_path)
+
+    document = MusicXmlImporter().import_file(musicxml_path)
+
+    assert len(document.melody.notes) == 1
+
+    imported_note = document.melody.notes[0]
+
+    assert imported_note.pitch == 60
+    assert imported_note.start == Fraction(0)
+    assert imported_note.end == Fraction(8)
+
+    assert len(document.source_score.parts) == 1
+    assert len(document.source_score.parts[0].flatten().notes) == 2

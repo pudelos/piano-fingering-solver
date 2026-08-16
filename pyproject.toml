@@ -1,0 +1,34 @@
+[project]
+name = "piano-fingering-solver"
+version = "0.1.0"
+description = "Automatic piano fingering generation from MusicXML scores."
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Witold Milewski", email = "67710811+pudelos@users.noreply.github.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "music21>=10.5.0",
+]
+
+[project.urls]
+Repository = "https://github.com/pudelos/piano-fingering-solver"
+Issues = "https://github.com/pudelos/piano-fingering-solver/issues"
+
+[build-system]
+requires = ["uv_build>=0.12.4,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.3",
+]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

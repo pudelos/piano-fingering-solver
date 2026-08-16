@@ -2,6 +2,7 @@ import zipfile
 from fractions import Fraction
 
 import pytest
+from music21 import harmony as music21_harmony
 from music21 import note as music21_note
 from music21 import stream
 from music21 import tie as music21_tie
@@ -79,3 +80,29 @@ def test_imports_tied_notes_as_single_note(tmp_path):
 
     assert len(document.source_score.parts) == 1
     assert len(document.source_score.parts[0].flatten().notes) == 2
+
+
+def test_chord_symbol_is_allowed(tmp_path):
+    source_score = stream.Score()
+    part = stream.Part()
+
+    chord_symbol = music21_harmony.ChordSymbol("Cmaj7")
+    note = music21_note.Note(60)
+    note.quarterLength = 1
+
+    part.insert(0, chord_symbol)
+    part.insert(0, note)
+    source_score.insert(0, part)
+
+    musicxml_path = tmp_path / "chord-symbol.musicxml"
+    source_score.write("musicxml", fp=musicxml_path)
+
+    document = MusicXmlImporter().import_file(musicxml_path)
+
+    assert len(document.melody.notes) == 1
+    assert document.melody.notes[0].pitch == 60
+
+    chord_symbols = document.source_score.recurse().getElementsByClass(
+        music21_harmony.ChordSymbol
+    )
+    assert len(chord_symbols) == 1

@@ -108,3 +108,41 @@ def test_overlapping_notes_is_rejected():
 
     with pytest.raises(MusicXmlImportError):
         MusicXmlImporter().import_file(path)
+
+
+def test_grace_note_is_rejected(tmp_path):
+    source_score = stream.Score()
+    part = stream.Part()
+
+    grace_note = music21_note.Note("E4").getGrace()
+    regular_note = music21_note.Note("C4")
+    regular_note.quarterLength = 1
+
+    part.append(grace_note)
+    part.append(regular_note)
+    source_score.insert(0, part)
+
+    musicxml_path = tmp_path / "grace.musicxml"
+    source_score.write("musicxml", fp=musicxml_path)
+
+    with pytest.raises(MusicXmlImportError):
+        MusicXmlImporter().import_file(musicxml_path)
+
+
+def test_unpitched_note_is_rejected(tmp_path):
+    source_score = stream.Score()
+    part = stream.Part()
+
+    unpitched_note = music21_note.Unpitched()
+    unpitched_note.displayStep = "C"
+    unpitched_note.displayOctave = 4
+    unpitched_note.quarterLength = 1
+
+    part.append(unpitched_note)
+    source_score.insert(0, part)
+
+    musicxml_path = tmp_path / "unpitched.musicxml"
+    source_score.write("musicxml", fp=musicxml_path)
+
+    with pytest.raises(MusicXmlImportError):
+        MusicXmlImporter().import_file(musicxml_path)

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from piano_fingering_solver.core.note import Note
+from piano_fingering_solver.models.note import Note
 
 
 @dataclass(slots=True)

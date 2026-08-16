@@ -4,11 +4,11 @@ from pathlib import Path
 from music21 import converter
 from music21 import note as music21_note
 
-from piano_fingering_solver.core.melody import Melody
-from piano_fingering_solver.core.note import Note
-from piano_fingering_solver.importer.document import MusicXmlDocument
 from piano_fingering_solver.importer.exceptions import MusicXmlImportError
 from piano_fingering_solver.importer.validator import MusicXmlValidator
+from piano_fingering_solver.models.document import MusicXmlDocument
+from piano_fingering_solver.models.melody import Melody
+from piano_fingering_solver.models.note import Note
 
 
 class MusicXmlImporter:

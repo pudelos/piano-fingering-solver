@@ -5,8 +5,8 @@ from music21 import harmony as music21_harmony
 from music21 import note as music21_note
 from music21 import stream
 
-from piano_fingering_solver.core.note import Note
 from piano_fingering_solver.importer.exceptions import MusicXmlImportError
+from piano_fingering_solver.models.note import Note
 
 
 class MusicXmlValidator:

@@ -4,6 +4,7 @@ from pathlib import Path
 from music21 import converter
 from music21 import note as music21_note
 
+from piano_fingering_solver.formats import MUSICXML_EXTENSIONS
 from piano_fingering_solver.importer.exceptions import MusicXmlImportError
 from piano_fingering_solver.importer.validator import MusicXmlValidator
 from piano_fingering_solver.models.document import MusicXmlDocument
@@ -12,21 +13,13 @@ from piano_fingering_solver.models.note import Note
 
 
 class MusicXmlImporter:
-    SUPPORTED_EXTENSIONS = frozenset(
-        {
-            ".musicxml",
-            ".xml",
-            ".mxl",
-        }
-    )
-
     def import_file(self, path: str | Path) -> MusicXmlDocument:
         path = Path(path)
 
         if not path.is_file():
             raise MusicXmlImportError(f"MusicXML file not found: {path}")
 
-        if path.suffix.lower() not in self.SUPPORTED_EXTENSIONS:
+        if path.suffix.lower() not in MUSICXML_EXTENSIONS:
             raise MusicXmlImportError(f"Unsupported file extension: {path.suffix}")
 
         try:

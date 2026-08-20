@@ -48,6 +48,16 @@ def test_imports_notes(tmp_path, extension, pitches):
         assert imported_note.start == Fraction(index)
         assert imported_note.end == Fraction(index + 1)
 
+    assert len(document.melody.notes) == len(document.melody_source_notes)
+
+    source_notes = list(
+        document.source_score.parts[0].flatten().getElementsByClass(music21_note.Note)
+    )
+    for melody_source_note, source_note in zip(
+        document.melody_source_notes, source_notes, strict=True
+    ):
+        assert melody_source_note is source_note
+
 
 def test_imports_tied_notes_as_single_note(tmp_path):
     source_score = stream.Score()
@@ -81,6 +91,13 @@ def test_imports_tied_notes_as_single_note(tmp_path):
     assert len(document.source_score.parts) == 1
     assert len(document.source_score.parts[0].flatten().notes) == 2
 
+    source_notes = list(
+        document.source_score.parts[0].flatten().getElementsByClass(music21_note.Note)
+    )
+    assert len(source_notes) == 2
+    assert len(document.melody_source_notes) == 1
+    assert document.melody_source_notes[0] is source_notes[0]
+
 
 def test_chord_symbol_is_allowed(tmp_path):
     source_score = stream.Score()
@@ -106,3 +123,9 @@ def test_chord_symbol_is_allowed(tmp_path):
         music21_harmony.ChordSymbol
     )
     assert len(chord_symbols) == 1
+    assert len(document.melody_source_notes) == 1
+
+    source_notes = list(
+        document.source_score.parts[0].flatten().getElementsByClass(music21_note.Note)
+    )
+    assert document.melody_source_notes[0] is source_notes[0]

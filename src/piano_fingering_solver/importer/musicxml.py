@@ -41,11 +41,20 @@ class MusicXmlImporter:
         analysis_score = source_score.stripTies(inPlace=False)
 
         imported_notes: list[Note] = []
+        melody_source_notes: list[music21_note.Note] = []
+
         part = analysis_score.parts[0]
 
         for element in part.flatten().notes:
             if not isinstance(element, music21_note.Note):
                 continue
+
+            source_note = element.derivation.origin
+
+            if not isinstance(source_note, music21_note.Note):
+                raise MusicXmlImportError(
+                    "Could not locate the original MusicXML note."
+                )
 
             start = Fraction(str(element.offset))
             duration = Fraction(str(element.quarterLength))
@@ -59,10 +68,12 @@ class MusicXmlImporter:
                 )
             )
 
-        imported_notes.sort(key=lambda note: note.start)
+            melody_source_notes.append(source_note)
+
         MusicXmlValidator.validate_melody(imported_notes)
 
         return MusicXmlDocument(
             melody=Melody(notes=imported_notes),
             source_score=source_score,
+            melody_source_notes=melody_source_notes,
         )

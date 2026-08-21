@@ -12,7 +12,7 @@ Automatic generator of piano fingerings based on MusicXML files.
 
 - [x] MusicXML importer
 - [ ] Fingering solver
-- [ ] MusicXML exporter
+- [x] MusicXML exporter
 
 ## Development
 

@@ -1,8 +1,8 @@
 from fractions import Fraction
 from pathlib import Path
 
-from piano_fingering_solver.core.note import Note
 from piano_fingering_solver.importer.musicxml import MusicXmlImporter
+from piano_fingering_solver.models.note import Note
 
 FIXTURES_DIR = Path(__file__).parent.parent / "fixtures"
 
